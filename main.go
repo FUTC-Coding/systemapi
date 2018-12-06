@@ -8,6 +8,7 @@ import (
 	"github.com/mackerelio/go-osstat/memory"
 	"github.com/mackerelio/go-osstat/network"
 	"os"
+	"os/exec"
 	"time"
 )
 
@@ -27,6 +28,18 @@ func main() {
 			"user": getCpu(0),
 			"system": getCpu(1),
 			"idle": getCpu(2),
+		})
+	})
+
+	r.GET("/net", func(c *gin.Context){
+		c.JSON(200, gin.H{
+			"network": getNetwork(1),
+		})
+	})
+
+	r.GET("/uptime", func(c *gin.Context){
+		c.JSON(200, gin.H{
+			"uptime": getUptime(),
 		})
 	})
 
@@ -86,5 +99,17 @@ func getNetwork(i int) (float64){
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		return 0
 	}
-	total := float64(after.Total - before.)
+	fmt.Println(before)
+	fmt.Println(after)
+	return 0
+}
+
+func getUptime() (string){
+	out, err := exec.Command("uptime", "-p").Output()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		return ""
+	}
+	output := fmt.Sprintf("%s\n", out)
+	return output
 }
