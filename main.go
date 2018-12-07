@@ -9,6 +9,7 @@ import (
 	"github.com/mackerelio/go-osstat/network"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 )
 
@@ -110,6 +111,7 @@ func getUptime() (string){
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		return ""
 	}
-	output := fmt.Sprintf("%s\n", out)
+	output := fmt.Sprintf("%s", out)
+	output = strings.TrimSuffix(output, "\n")
 	return output
 }
