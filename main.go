@@ -34,7 +34,8 @@ func main() {
 
 	r.GET("/net", func(c *gin.Context){
 		c.JSON(200, gin.H{
-			"network": getNetwork(1),
+			"RxBytes": getNetwork(0),
+			"TxBytes": getNetwork(1),
 		})
 	})
 
@@ -88,7 +89,7 @@ func getCpu(i int) (float64){
 	return 0
 }
 
-func getNetwork(i int) (float64){
+func getNetwork(i int) (uint64){
 	before, err := network.Get()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
@@ -100,8 +101,13 @@ func getNetwork(i int) (float64){
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		return 0
 	}
-	fmt.Println(before)
-	fmt.Println(after)
+	if i == 0 {
+		return after[0].RxBytes - before[0].RxBytes
+	}
+	if i == 1 {
+		return after[0].TxBytes - before[0].TxBytes
+	}
+
 	return 0
 }
 
