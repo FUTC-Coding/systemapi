@@ -7,6 +7,7 @@ import (
 	"github.com/mackerelio/go-osstat/cpu"
 	"github.com/mackerelio/go-osstat/memory"
 	"github.com/mackerelio/go-osstat/network"
+	"github.com/mackerelio/go-osstat/disk"
 	"os"
 	"os/exec"
 	"strings"
@@ -120,4 +121,13 @@ func getUptime() (string){
 	output := fmt.Sprintf("%s", out)
 	output = strings.TrimSuffix(output, "\n")
 	return output
+}
+
+func getDisk() (uint64){
+	before, err := disk.Get()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		return 0
+	}
+	return before
 }
