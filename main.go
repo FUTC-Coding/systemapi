@@ -46,6 +46,12 @@ func main() {
 		})
 	})
 
+	r.GET("/net", func(c *gin.Context){
+		c.JSON(200, gin.H{
+			"ReadsCompleted": getDisk(0),
+			"WritesCompleted": getDisk(1),
+		})
+	})
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
 
@@ -123,11 +129,23 @@ func getUptime() (string){
 	return output
 }
 
-func getDisk() (uint64){
+func getDisk(i int) (uint64){
 	before, err := disk.Get()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		return 0
 	}
-	return before
+	time.Sleep(time.Duration(1) * time.Second)
+	after, err := disk.Get()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		return 0
+	}
+	if i == 0 {
+		return after[0].ReadsCompleted - before[0].ReadsCompleted
+	}
+	if i == 1 {
+		return after[0].WritesCompleted - before[0].WritesCompleted
+	}
+	return 0
 }
