@@ -46,7 +46,7 @@ func main() {
 		})
 	})
 
-	r.GET("/net", func(c *gin.Context){
+	r.GET("/disk", func(c *gin.Context){
 		c.JSON(200, gin.H{
 			"ReadsCompleted": getDisk(0),
 			"WritesCompleted": getDisk(1),
