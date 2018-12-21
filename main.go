@@ -10,6 +10,7 @@ import (
 	"github.com/mackerelio/go-osstat/disk"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -126,7 +127,24 @@ func getUptime() (string){
 	}
 	output := fmt.Sprintf("%s", out)
 	output = strings.TrimSuffix(output, "\n")
-	return output
+	re := regexp.MustCompile("[0-9]+")
+	nums := re.FindAllString(output, -1)
+	for i, j := 0, len(nums)-1; i < j; i, j = i+1, j-1 { //reverse the array
+		nums[i], nums[j] = nums[j], nums[i]
+	}
+	s := ""
+	for i,n := range nums {
+		if i == 0 {
+			s = n + "m"
+		}
+		if i == 1 {
+			s = n + "h" + s
+		}
+		if i == 2 {
+			s = n + "d" + s
+		}
+	}
+	return s
 }
 
 func getDisk(i int) (uint64){
