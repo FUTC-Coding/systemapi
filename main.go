@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"strconv"
 )
 
 func main() {
@@ -29,6 +30,7 @@ func main() {
 	r.GET("/cpu", func(c *gin.Context){
 		c.JSON(200, gin.H{
 			"model": getCpuModel(),
+			"cores": getCpuCores(),
 			"user": getCpu(0),
 			"system": getCpu(1),
 			"idle": getCpu(2),
@@ -57,7 +59,7 @@ func main() {
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
 func getCpuModel() (string) {
-	out, err := exec.Command("bash", "-c", "less /proc/cpuinfo | grep \"model name\"").Output()
+	out, err := exec.Command("bash", "-c", "cat /proc/cpuinfo | grep \"model name\"").Output()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		return ""
@@ -66,6 +68,24 @@ func getCpuModel() (string) {
 	output = strings.TrimSuffix(output, "\n")
 	fmt.Println(output[13:])
 	return output[13:]
+}
+
+func getCpuCores() (int) {
+	out, err := exec.Command("bash", "-c", "cat /proc/cpuinfo | grep \"cpu cores\"").Output()
+	if err != nil {
+                fmt.Fprintf(os.Stderr, "%s\n", err)
+                return 0
+        }
+	output := fmt.Sprintf("%s", out)
+        output = strings.TrimSuffix(output, "\n")
+	output = output[12:]
+	fmt.Println(output)
+	i, err := strconv.Atoi(output)
+	if err != nil {
+                fmt.Fprintf(os.Stderr, "%s\n", err)
+                return 0
+        }
+	return i
 }
 
 func getMemory(i int) (uint64){
