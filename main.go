@@ -57,13 +57,15 @@ func main() {
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
 func getCpuModel() (string) {
-	out, err := exec.Command("less /proc/cpuinfo | grep \"model name\"").Output()
+	out, err := exec.Command("bash", "-c", "less /proc/cpuinfo | grep \"model name\"").Output()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		return ""
 	}
 	output := fmt.Sprintf("%s", out)
-	return output
+	output = strings.TrimSuffix(output, "\n")
+	fmt.Println(output[13:])
+	return output[13:]
 }
 
 func getMemory(i int) (uint64){
