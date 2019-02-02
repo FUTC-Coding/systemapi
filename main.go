@@ -28,6 +28,7 @@ func main() {
 
 	r.GET("/cpu", func(c *gin.Context){
 		c.JSON(200, gin.H{
+			"model": getCpuModel(),
 			"user": getCpu(0),
 			"system": getCpu(1),
 			"idle": getCpu(2),
@@ -54,6 +55,15 @@ func main() {
 		})
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080
+}
+func getCpuModel() (string) {
+	out, err := exec.Command("less /proc/cpuinfo | grep \"model name\"").Output()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s\n", err)
+		return ""
+	}
+	output := fmt.Sprintf("%s", out)
+	return output
 }
 
 func getMemory(i int) (uint64){
